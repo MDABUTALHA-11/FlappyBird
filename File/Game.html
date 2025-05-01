@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bamboo Forest Flappy Bird</title>
+
+    <!-- Bootstrab-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   
+<!-- Google Fonts-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unlock&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        /* Navbar Styles */
+       /* Custom CSS for additional styling */
+    .navbar {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 0.5rem 1rem;
+    }
+    
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem !important;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+    .nav-link:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-2px);
+    }
+
+    .navbar-brand span {
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 992px) {
+        .navbar-collapse {
+            background: rgba(46, 125, 50, 0.95);
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 8px;
+        }
+    }
+
+        /* Leaderboard Styles */
+        .leaderboard {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+            padding: 1rem;
+            z-index: 1001;
+        }
+
+        .leaderboard.active {
+            right: 0;
+        }
+
+        .leaderboard h2 {
+            color: #2E7D32;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .scores-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        /* Game Styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('https://iili.io/3XV1q2n.md.jpg') center/cover no-repeat;
+            overflow: hidden;
+            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+            padding-top: 60px; /* Add space for navbar */
+        }
+
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            -webkit-tap-highlight-color: transparent;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            margin-top: 20px;
+        }
+
+        #game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,100,0,0.5);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: #fff;
+            border: 2px solid #2E7D32;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: scale(0.95);
+            background: #45a049;
+        }
+
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(46, 125, 50, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            color: #fff;
+            border: 2px solid #1B5E20;
+            display: none;
+            z-index: 200;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .control-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+    </style>
+</head>
+<body style="font-family:Unlock">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top" style="background: rgba(46, 125, 50, 0.95) !important;">
+        <div class="container">
+            <!-- Brand/Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/image/download__6_-removebg-preview.png" 
+                     class="me-2" 
+                     alt="Flappy Bird Logo"
+                     style="height: 50px; width: 60px; border-radius: 10px;">
+                <span class="fw-bold">Flappy Bird</span>
+            </a>
+    
+            <!-- Hamburger Menu for Mobile -->
+            <button class="navbar-toggler" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="show-leaderboard">
+                            <i class="fas fa-trophy me-2"></i>Leaderboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Aboutus.html">
+                            <i class="fas fa-info-circle me-2"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Privacy.html">
+                            <i class="fas fa-shield-alt me-2"></i>Privacy
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard" id="leaderboard">
+        <h2>🏆 Top Scores 🏆</h2>
+        <ul class="scores-list" id="scores-list"></ul>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Game Container -->
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="score" style="font-size: 50px; color: brown;" >0</div>
+        <div class="control-hint" style="font-size: 50px;">Tap anywhere to fly!</div>
+        <div id="controls" >
+            <button id="play-btn" style="font-family: Unlock;">Play</button>
+            <button id="pause-btn" style="font-family: Unlock;">Pause</button>
+        </div>
+        <div id="game-over">
+            <h2>Game Over!</h2>
+            <p>Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" style="font-family: Unlock;" >Play Again</button>
+        </div>
+    </div>
+   
+    <script>
+
+
+
+
+
+
+
+        // Leaderboard functionality
+        const leaderboard = {
+            scores: JSON.parse(localStorage.getItem('flappyScores')) || [],
+            maxScores: 5,
+
+            addScore(score) {
+                this.scores.push({
+                    score: score,
+                    date: new Date().toLocaleDateString()
+                });
+                this.scores.sort((a, b) => b.score - a.score);
+                this.scores = this.scores.slice(0, this.maxScores);
+                localStorage.setItem('flappyScores', JSON.stringify(this.scores));
+                this.updateDisplay();
+            },
+
+            updateDisplay() {
+                const scoresList = document.getElementById('scores-list');
+                scoresList.innerHTML = this.scores
+                    .map((score, index) => `
+                        <li class="score-item">
+                            <span>${index + 1}. ${score.score}</span>
+                            <span>${score.date}</span>
+                        </li>
+                    `)
+                    .join('');
+            }
+        };
+
+        // Toggle leaderboard
+        document.getElementById('show-leaderboard').addEventListener('click', () => {
+            document.getElementById('leaderboard').classList.add('active');
+            document.getElementById('overlay').style.display = 'block';
+        });
+
+        document.getElementById('overlay').addEventListener('click', () => {
+            document.getElementById('leaderboard').classList.remove('active');
+            document.getElementById('overlay').style.display = 'none';
+        });
+
+        // Game code
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const gameContainer = document.getElementById('game-container');
+        
+        canvas.width = gameContainer.offsetWidth;
+        canvas.height = gameContainer.offsetHeight;
+
+        const BIRD_IMAGE = new Image();
+        BIRD_IMAGE.src = 'https://iili.io/3XWlQkb.md.png';
+        const PIPE_IMAGE = new Image();
+        PIPE_IMAGE.src = 'https://iili.io/3XVljP1.md.png';
+
+        const CONTROL_CONFIG = {
+            jumpForce: -8.5,
+            gravity: 0.5,
+            maxFallSpeed: 10,
+            tapBuffer: 100,
+            smoothRotation: true,
+            rotationSpeed: 4,
+            inputTypes: ['touch', 'mouse', 'keyboard']
+        };
+
+        const game = {
+            bird: {
+                x: canvas.width / 5,
+                y: canvas.height / 2,
+                width: 130,
+                height: 90,
+                velocity: 0,
+                angle: 0,
+                lastJump: 0
+            },
+            pipes: [],
+            pipeWidth: 70,
+            gap: 200,
+            score: 0,
+            isPlaying: false,
+            animationId: null,
+            lastPipeTime: 0,
+            pipeInterval: 2200,
+            inputActive: true,
+            pipeSpeed: 2.2
+        };
+
+        class InputManager {
+            constructor() {
+                this.initEvents();
+            }
+
+            initEvents() {
+                gameContainer.addEventListener('touchstart', this.handleInput);
+                gameContainer.addEventListener('mousedown', this.handleInput);
+                document.addEventListener('keydown', this.handleInput);
+            }
+
+            handleInput = (e) => {
+                if (!game.isPlaying || !game.inputActive) return;
+                
+                const now = Date.now();
+                if (now - game.bird.lastJump < CONTROL_CONFIG.tapBuffer) return;
+
+                game.bird.lastJump = now;
+                game.bird.velocity = CONTROL_CONFIG.jumpForce;
+                
+                this.showTapFeedback(e);
+            }
+
+            showTapFeedback(e) {
+                const feedback = document.createElement('div');
+                feedback.style.position = 'absolute';
+                feedback.style.width = '90px';
+                feedback.style.height = '60px';
+                feedback.style.background = 'radial-gradient(rgba(76,175,80,0.4), transparent)';
+                feedback.style.borderRadius = '50%';
+                feedback.style.pointerEvents = 'none';
+
+                const rect = gameContainer.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                feedback.style.left = x - 20 + 'px';
+                feedback.style.top = y - 20 + 'px';
+
+                gameContainer.appendChild(feedback);
+                setTimeout(() => feedback.remove(), 200);
+            }
+        }
+
+        function createPipe() {
+            const minHeight = 120;
+            const maxHeight = canvas.height - game.gap - minHeight;
+            const height = Math.random() * (maxHeight - minHeight) + minHeight;
+
+            return {
+                x: canvas.width + 100,
+                topHeight: height,
+                bottomHeight: canvas.height - height - game.gap,
+                passed: false
+            };
+        }
+
+        function updatePipes() {
+            const now = Date.now();
+            if (now - game.lastPipeTime > game.pipeInterval) {
+                game.pipes.push(createPipe());
+                game.lastPipeTime = now;
+                
+                game.pipeSpeed = Math.min(game.pipeSpeed + 0.03, 3.5);
+                game.gap = Math.max(game.gap - 0.7, 160);
+            }
+
+            game.pipes.forEach(pipe => {
+                pipe.x -= game.pipeSpeed;
+
+                if (!pipe.passed && pipe.x + game.pipeWidth < game.bird.x) {
+                    game.score++;
+                    document.getElementById('score').textContent = game.score;
+                    pipe.passed = true;
+                }
+
+                const birdBox = {
+                    x: game.bird.x + 4.5,
+                    y: game.bird.y + 4.5,
+                    width: game.bird.width - 9,
+                    height: game.bird.height - 9
+                };
+
+                const pipeBox = {
+                    x: pipe.x + 10,
+                    top: pipe.topHeight - 10,
+                    bottom: canvas.height - pipe.bottomHeight + 10,
+                    width: game.pipeWidth - 10
+                };
+
+                if (birdBox.x < pipeBox.x + pipeBox.width &&
+                    birdBox.x + birdBox.width > pipeBox.x &&
+                    (birdBox.y < pipeBox.top || birdBox.y + birdBox.height > pipeBox.bottom)) {
+                    gameOver();
+                }
+            });
+
+            game.pipes = game.pipes.filter(pipe => pipe.x + game.pipeWidth > -50);
+        }
+
+        function updateBird() {
+            game.bird.velocity = Math.min(game.bird.velocity + CONTROL_CONFIG.gravity, CONTROL_CONFIG.maxFallSpeed);
+            game.bird.y += game.bird.velocity;
+
+            if (CONTROL_CONFIG.smoothRotation) {
+                const targetAngle = Math.min(Math.max(game.bird.velocity * 4, -30), 30);
+                game.bird.angle += (targetAngle - game.bird.angle) * 0.1;
+            }
+
+            if (game.bird.y < -10 || game.bird.y + game.bird.height > canvas.height + 10) {
+                gameOver();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 10;
+            ctx.translate(game.bird.x + game.bird.width/2, game.bird.y + game.bird.height/2);
+            ctx.rotate(game.bird.angle * Math.PI / 180);
+            ctx.drawImage(BIRD_IMAGE, -game.bird.width/2, -game.bird.height/2, game.bird.width, game.bird.height);
+            ctx.restore();
+
+            game.pipes.forEach(pipe => {
+                ctx.save();
+                ctx.scale(1, -1);
+                ctx.drawImage(
+                    PIPE_IMAGE,
+                    pipe.x,
+                    -pipe.topHeight,
+                    game.pipeWidth,
+                    pipe.topHeight
+                );
+                ctx.restore();
+
+                ctx.drawImage(
+                    PIPE_IMAGE,
+                    pipe.x,
+                    canvas.height - pipe.bottomHeight,
+                    game.pipeWidth,
+                    pipe.bottomHeight
+                );
+            });
+        }
+
+        function gameLoop() {
+            if (game.isPlaying) {
+                updateBird();
+                updatePipes();
+                draw();
+                game.animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function gameOver() {
+            game.isPlaying = false;
+            cancelAnimationFrame(game.animationId);
+            document.getElementById('game-over').style.display = 'block';
+            document.getElementById('final-score').textContent = game.score;
+            leaderboard.addScore(game.score);
+        }
+
+        function resetGame() {
+            game.bird.y = canvas.height / 2;
+            game.bird.velocity = 0;
+            game.bird.angle = 0;
+            game.pipes = [];
+            game.score = 0;
+            game.lastPipeTime = Date.now();
+            game.pipeSpeed = 2.2;
+            game.gap = 200;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('game-over').style.display = 'none';
+        }
+
+        new InputManager();
+        canvas.width = gameContainer.offsetWidth;
+        canvas.height = gameContainer.offsetHeight;
+        leaderboard.updateDisplay();
+
+        document.getElementById('play-btn').addEventListener('click', () => {
+            if (!game.isPlaying) {
+                resetGame();
+                game.isPlaying = true;
+                game.inputActive = true;
+                document.querySelector('.control-hint').style.display = 'none';
+                gameLoop();
+            }
+        });
+
+        document.getElementById('pause-btn').addEventListener('click', () => {
+            game.isPlaying = !game.isPlaying;
+            game.inputActive = game.isPlaying;
+            if (game.isPlaying) gameLoop();
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            resetGame();
+            game.isPlaying = true;
+            game.inputActive = true;
+            document.querySelector('.control-hint').style.display = 'none';
+            gameLoop();
+        });
+    </script>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

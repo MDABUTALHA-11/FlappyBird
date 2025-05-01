@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bamboo Forest Flappy Bird</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unlock&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Styles */
+        .gradient-bg {
+            background: linear-gradient(135deg, #2E7D32, #1B5E20, #004D40);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .team-card {
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon-lg {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+
+</head>
+<body style="font-family:Unlock">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" data-page="home">
+             <img src="/image/download__6_-removebg-preview.png" 
+                class="me-2" 
+                alt="Flappy Bird Logo"
+                style="height: 50px; width: 60px; border-radius: 10px;">Flappy Bamboo
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Game.html" data-page="home">
+                            <i class="fas fa-home me-2"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Game.html" data-page="game">
+                            <i class="fas fa-gamepad me-2"></i>Play
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="leaderboard">
+                            <i class="fas fa-trophy me-2"></i>Leaderboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Aboutus.html" data-page="about">
+                            <i class="fas fa-info-circle me-2"></i>About
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Page -->
+    <section id="about" class="page-section">
+        <div class="gradient-bg py-5">
+            <div class="container">
+                <div class="glass-card p-4 p-md-5 mb-5">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-gamepad icon-lg"></i><br>
+                        About Flappy Bamboo Bird
+                    </h2>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="glass-card p-4 h-100">
+                                <h3><i class="fas fa-code me-2"></i>Development</h3>
+                                <p class="lead">
+                                    Developed by Path Industry using modern web technologies:
+                                </p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fab fa-html5 me-2"></i>HTML5
+                                    </span>
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fab fa-css3 me-2"></i>CSS3
+                                    </span>
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fab fa-js me-2"></i>JavaScript
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="glass-card p-4 h-100">
+                                <h3><i class="fas fa-feather me-2"></i>Features</h3>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle me-2 text-success"></i>
+                                        Responsive Design
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle me-2 text-success"></i>
+                                        Progressive Difficulty
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle me-2 text-success"></i>
+                                        Global Leaderboard
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle me-2 text-success"></i>
+                                        Open Source
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="glass-card p-4 mt-4">
+                                <h3 class="text-center mb-4">
+                                    <i class="fas fa-users icon-lg"></i><br>
+                                    Development Team
+                                </h3>
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <div class="team-card glass-card p-3 text-center">
+                                            <img src="/image/jimeng-2025-04-21-294-Muslim Man soul a Ghibli style image.jpeg" class="img-fluid mb-3 rounded-circle" alt="Developer" width="100px" height="100px">
+                                            <h5>MD ABU TALHA</h5>
+                                            <p class="text-muted">Lead Developer</p>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="#" class="text-white">
+                                                    <i class="fab fa-github"></i>
+                                                </a>
+                                                <a href="#" class="text-white">
+                                                    <i class="fab fa-linkedin"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Add more team members -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <h4><i class="fas fa-code-branch me-2"></i>Open Source</h4>
+                        <p>
+                            Contribute to our project on GitHub!
+                            <br>
+                            <a href="https://github.com/your-repo" class="btn btn-light mt-3">
+                                <i class="fab fa-github me-2"></i>View Repository
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

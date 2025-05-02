@@ -13,47 +13,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unlock&display=swap" rel="stylesheet">
     <style>
-        * {
+          * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             touch-action: manipulation;
         }
 
-        /* Navbar Styles */
-       /* Custom CSS for additional styling */
-    .navbar {
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 0.5rem 1rem;
-    }
-    
-    .nav-link {
-        font-size: 1.1rem;
-        padding: 0.8rem 1.2rem !important;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-    }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+            background: rgba(46, 125, 50, 0.95) !important;
+            z-index: 1031;
+        }
 
-    .nav-link:hover {
-        background: rgba(255,255,255,0.1);
-        transform: translateY(-2px);
-    }
-
-    .navbar-brand span {
-        font-size: 1.5rem;
-        letter-spacing: 0.5px;
-    }
-
-    @media (max-width: 992px) {
-        .navbar-collapse {
-            background: rgba(46, 125, 50, 0.95);
-            padding: 1rem;
-            margin-top: 0.5rem;
+        .nav-link {
+            font-size: 1.1rem;
+            padding: 0.8rem 1.2rem !important;
+            transition: all 0.3s ease;
             border-radius: 8px;
         }
-    }
 
-        /* Leaderboard Styles */
         .leaderboard {
             position: fixed;
             top: 0;
@@ -64,30 +44,18 @@
             box-shadow: -2px 0 5px rgba(0,0,0,0.2);
             transition: right 0.3s ease;
             padding: 1rem;
-            z-index: 1001;
+            z-index: 1032;
+        }
+
+        @media (max-width: 768px) {
+            .leaderboard {
+                width: 100%;
+                right: -100%;
+            }
         }
 
         .leaderboard.active {
             right: 0;
-        }
-
-        .leaderboard h2 {
-            color: #2E7D32;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .scores-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .score-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            border-bottom: 1px solid #ddd;
-            font-size: 0.9rem;
         }
 
         .overlay {
@@ -98,10 +66,9 @@
             height: 100%;
             background: rgba(0,0,0,0.5);
             display: none;
-            z-index: 999;
+            z-index: 1030;
         }
 
-        /* Game Styles */
         body {
             display: flex;
             justify-content: center;
@@ -109,15 +76,14 @@
             min-height: 100vh;
             background: url('https://iili.io/3XV1q2n.md.jpg') center/cover no-repeat;
             overflow: hidden;
-            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
-            padding-top: 60px; /* Add space for navbar */
+            font-family: 'Unlock', cursive;
+            padding-top: 60px;
         }
 
         #game-container {
             position: relative;
             width: 400px;
             height: 600px;
-            -webkit-tap-highlight-color: transparent;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
@@ -135,11 +101,10 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 40px;
-            color: #fff;
+            font-size: 50px;
+            color: brown;
             text-shadow: 2px 2px 4px rgba(0,100,0,0.5);
             z-index: 100;
-            pointer-events: none;
         }
 
         #controls {
@@ -161,13 +126,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            touch-action: manipulation;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        button:active {
-            transform: scale(0.95);
-            background: #45a049;
         }
 
         #game-over {
@@ -183,7 +142,6 @@
             border: 2px solid #1B5E20;
             display: none;
             z-index: 200;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
 
         .control-hint {
@@ -197,7 +155,6 @@
             opacity: 0.8;
             animation: pulse 2s infinite;
             pointer-events: none;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
 
         @keyframes pulse {
@@ -255,7 +212,6 @@
         <ul class="scores-list" id="scores-list"></ul>
     </div>
     <div class="overlay" id="overlay"></div>
-
     <!-- Game Container -->
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
@@ -342,29 +298,28 @@
             rotationSpeed: 4,
             inputTypes: ['touch', 'mouse', 'keyboard']
         };
-
-        const game = {
+// Updated game configuration with larger gap
+const game = {
             bird: {
                 x: canvas.width / 5,
                 y: canvas.height / 2,
-                width: 110,
+                width: 130,
                 height: 90,
-                velocity: 2,
+                velocity: 0,
                 angle: 0,
                 lastJump: 0
             },
             pipes: [],
             pipeWidth: 70,
-            gap: 400,
+            gap: 800,  // Increased initial gap
             score: 0,
             isPlaying: false,
             animationId: null,
             lastPipeTime: 0,
-            pipeInterval: 3300,
+            pipeInterval: 6300,
             inputActive: true,
-            pipeSpeed: 1.2
+            pipeSpeed: 2.2
         };
-
         class InputManager {
             constructor() {
                 this.initEvents();
@@ -529,7 +484,8 @@
             leaderboard.addScore(game.score);
         }
 
-        function resetGame() {
+     // Modified resetGame function
+     function resetGame() {
             game.bird.y = canvas.height / 2;
             game.bird.velocity = 0;
             game.bird.angle = 0;
@@ -537,11 +493,10 @@
             game.score = 0;
             game.lastPipeTime = Date.now();
             game.pipeSpeed = 2.2;
-            game.gap = 200;
+            game.gap = 300;  // Reset to larger gap
             document.getElementById('score').textContent = '0';
             document.getElementById('game-over').style.display = 'none';
         }
-
         new InputManager();
         canvas.width = gameContainer.offsetWidth;
         canvas.height = gameContainer.offsetHeight;
@@ -570,6 +525,20 @@
             document.querySelector('.control-hint').style.display = 'none';
             gameLoop();
         });
+
+// Updated leaderboard toggle with mobile menu handling
+document.getElementById('show-leaderboard').addEventListener('click', () => {
+            document.getElementById('leaderboard').classList.add('active');
+            document.getElementById('overlay').style.display = 'block';
+            // Close mobile menu if open
+            const navbarCollapse = document.getElementById('navbarNav');
+            if (navbarCollapse.classList.contains('show')) {
+                new bootstrap.Collapse(navbarCollapse, {toggle: false});
+            }
+        });
+
+
+
     </script>
 
     <!-- Add Bootstrap JS and Popper.js -->

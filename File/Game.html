@@ -347,15 +347,15 @@
             bird: {
                 x: canvas.width / 5,
                 y: canvas.height / 2,
-                width: 90,
-                height: 70,
-                velocity: 0,
+                width: 110,
+                height: 90,
+                velocity: 2,
                 angle: 0,
                 lastJump: 0
             },
             pipes: [],
-            pipeWidth: 50,
-            gap: 300,
+            pipeWidth: 70,
+            gap: 400,
             score: 0,
             isPlaying: false,
             animationId: null,
@@ -411,7 +411,7 @@
 
         function createPipe() {
             const minHeight = 120;
-            const maxHeight = canvas.height - game.gap - minHeight;
+            const maxHeight = canvas.height - game.gap  - minHeight;
             const height = Math.random() * (maxHeight - minHeight) + minHeight;
 
             return {
